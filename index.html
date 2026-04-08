@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon - CNIT Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FFFFFF;
+            --primary-color: #46C0B9;
+            --text-color: #0E2038;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            padding: 5vh 0;
+        }
+
+        /* Subtle background grid for tech theme */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(70, 192, 185, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(70, 192, 185, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px rgba(70, 192, 185, 0.3);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                text-shadow: 0 0 10px rgba(70, 192, 185, 0.3);
+            }
+
+            to {
+                text-shadow: 0 0 20px rgba(70, 192, 185, 0.8);
+            }
+        }
+
+        .container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .clock-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .time-main {
+            font-size: clamp(60px, 15vw, 30rem);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            text-shadow: 0 0 10px rgba(14, 32, 56, 0.1);
+        }
+
+        .colon {
+            margin: 0 2vw;
+            animation: blink 1s infinite step-start;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        #minutes {
+            position: relative;
+        }
+
+        .time-sec {
+            position: absolute;
+            top: 95%;
+            /* Just under the minutes */
+            right: 0;
+            font-size: clamp(15px, 3.5vw, 5rem);
+            color: var(--primary-color);
+        }
+
+        .digit-group {
+            display: flex;
+        }
+
+        .digit-container {
+            position: relative;
+            height: 1em;
+            /* Depends on font-size */
+            width: 1.1ch;
+            /* Monospace width approx */
+            overflow: hidden;
+        }
+
+        .digit-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .digit-wrapper.animating {
+            transform: translateY(100%);
+        }
+
+        .digit-wrapper.animating-up {
+            /* To allow for next number to come from above,
+               the wrapper will have current at bottom (100%), next at top (0%).
+               Actually:
+               Start State: wrapper top 0. `.current` is at 0, `.next` is at -100%.
+               End State: wrapper transform translateY(100%). so `.next` goes to 0, `.current` goes to 100%.
+            */
+            transform: translateY(100%);
+        }
+
+        .digit {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .digit.current {
+            top: 0;
+        }
+
+        .digit.next {
+            top: -100%;
+        }
+
+        .footer {
+            text-align: center;
+        }
+
+        .footer p {
+            color: rgba(14, 32, 56, 0.6);
+            font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+            margin: 5px 0;
+            letter-spacing: 1px;
+        }
+
+        .footer .highlight {
+            color: var(--primary-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .logo {
+                max-width: 100px;
+            }
+
+            .time-sec-wrap {
+                padding-bottom: clamp(10px, 2.5vw, 2rem);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <img src="logo.png" alt="CNIT Solutions Logo" class="logo">
+        <h1 class="title">Coming Soon</h1>
+    </div>
+
+    <div class="container">
+        <div class="clock-container">
+            <div class="time-main">
+                <div class="digit-group" id="hours">
+                    <div class="digit-container" id="h1">
+                        <div class="digit-wrapper">
+                            <div class="digit current">0</div>
+                            <div class="digit next">0</div>
+                        </div>
+                    </div>
+                    <div class="digit-container" id="h2">
+                        <div class="digit-wrapper">
+                            <div class="digit current">0</div>
+                            <div class="digit next">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="colon">:</div>
+                <div class="digit-group" id="minutes">
+                    <div class="digit-container" id="m1">
+                        <div class="digit-wrapper">
+                            <div class="digit current">0</div>
+                            <div class="digit next">0</div>
+                        </div>
+                    </div>
+                    <div class="digit-container" id="m2">
+                        <div class="digit-wrapper">
+                            <div class="digit current">0</div>
+                            <div class="digit next">0</div>
+                        </div>
+                    </div>
+
+                    <div class="digit-group time-sec" id="seconds">
+                        <div class="digit-container" id="s1">
+                            <div class="digit-wrapper">
+                                <div class="digit current">0</div>
+                                <div class="digit next">0</div>
+                            </div>
+                        </div>
+                        <div class="digit-container" id="s2">
+                            <div class="digit-wrapper">
+                                <div class="digit current">0</div>
+                                <div class="digit next">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; <span id="year"></span></p>
+        <p class="highlight">CINORIUM | CNIT Solutions</p>
+    </div>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Used for counting up since a specific time, or just simply a clock.
+        // User asked for "count-up clock", which usually implies a timer since load or a starting point,
+        // but given the format HH:MM:SS on a coming soon page, a real clock is often desired.
+        // I will implement a clock that shows current time, but let's add a toggle to make it a timer if they want.
+        // I'll stick to a real clock for now. 
+
+        // Actually, to make it unambiguously a "count-up clock" it could be counting the time you spend on the page,
+        // but "clock" implies time of day. I will do real time.
+
+        function updateDigit(id, newValue) {
+            const container = document.getElementById(id);
+            if (!container) return;
+
+            const wrapper = container.querySelector('.digit-wrapper');
+            const currentObj = wrapper.querySelector('.digit.current');
+            const nextObj = wrapper.querySelector('.digit.next');
+
+            if (currentObj.textContent === newValue) return;
+
+            // Set the next value
+            nextObj.textContent = newValue;
+
+            // Trigger animation
+            wrapper.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            wrapper.style.transform = 'translateY(100%)';
+
+            // Wait for animation to finish, then reset
+            setTimeout(() => {
+                wrapper.style.transition = 'none';
+                wrapper.style.transform = 'translateY(0)';
+                currentObj.textContent = newValue;
+            }, 400); // match timeout with transition duration
+        }
+
+        function updateClock() {
+            const now = new Date();
+
+            let h = now.getHours() % 12 || 12;
+
+            const hours = String(h).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            updateDigit('h1', hours[0]);
+            updateDigit('h2', hours[1]);
+
+            updateDigit('m1', minutes[0]);
+            updateDigit('m2', minutes[1]);
+
+            updateDigit('s1', seconds[0]);
+            updateDigit('s2', seconds[1]);
+        }
+
+        // Initialize clock instantly without animation by doing a hard write,
+        // but the standard updateDigit handles initial state decently if we just call it.
+        const now = new Date();
+        let initH = now.getHours() % 12 || 12;
+        document.getElementById('h1').querySelector('.current').textContent = String(initH).padStart(2, '0')[0];
+        document.getElementById('h2').querySelector('.current').textContent = String(initH).padStart(2, '0')[1];
+        document.getElementById('m1').querySelector('.current').textContent = String(now.getMinutes()).padStart(2, '0')[0];
+        document.getElementById('m2').querySelector('.current').textContent = String(now.getMinutes()).padStart(2, '0')[1];
+        document.getElementById('s1').querySelector('.current').textContent = String(now.getSeconds()).padStart(2, '0')[0];
+        document.getElementById('s2').querySelector('.current').textContent = String(now.getSeconds()).padStart(2, '0')[1];
+
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+
+</html>
